@@ -12,13 +12,13 @@ using namespace fub;
 
 TEST_CASE("Fullfills Concept")
 {
-  REQUIRE(( Dimensions< dimensions<100> >() ));
-  REQUIRE(( Dimensions< dimensions<dyn> >() ));
+  REQUIRE(( concepts::span::Dimensions< dimensions<100> >() ));
+  REQUIRE(( concepts::span::Dimensions< dimensions<dyn> >() ));
 
-  REQUIRE(( Dimensions< dimensions<100, dyn> >() ));
-  REQUIRE(( Dimensions< dimensions<dyn, 100> >() ));
-  REQUIRE(( Dimensions< dimensions<dyn, dyn> >() ));
-  REQUIRE(( Dimensions< dimensions<100, 100> >() ));
+  REQUIRE(( concepts::span::Dimensions< dimensions<100, dyn> >() ));
+  REQUIRE(( concepts::span::Dimensions< dimensions<dyn, 100> >() ));
+  REQUIRE(( concepts::span::Dimensions< dimensions<dyn, dyn> >() ));
+  REQUIRE(( concepts::span::Dimensions< dimensions<100, 100> >() ));
 }
 
 TEST_CASE("Uses EBO")

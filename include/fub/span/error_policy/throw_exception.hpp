@@ -23,7 +23,7 @@ namespace fub::ep
     }
 
     template <ranges::Invocable Check, typename... Args>
-    void run(Check check, Args&&... what) const
+    constexpr void operator()(Check check, Args&&... what) const
     {
       if (!check()) {
         throw Exception{std::forward<Args>(what)...};
@@ -31,8 +31,8 @@ namespace fub::ep
     }
 
     template <class Tag, ranges::Invocable Check, class... Args>
-    void run(Tag, Check&& check, Args&&... args) const
-    { run(std::forward<Check>(check), std::forward<Args>(args)...); }
+    constexpr void operator()(Tag, Check&& check, Args&&... args) const
+    { this->operator()(std::forward<Check>(check), std::forward<Args>(args)...); }
   };
 }
 

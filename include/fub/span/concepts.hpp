@@ -12,13 +12,15 @@ namespace fub
 {
 	namespace ranges = std::experimental::ranges;
 
+	enum class dynamic_extents_tag { };
+	constexpr dynamic_extents_tag dyn [[maybe_unused]] { -1 };
+}
+
+namespace fub::concepts::span
+{
 	///////////////////////////////////////////////////////////////////////////
 	//                                                 CONCEPTS FOR DIMENSIONS
 	// {{{
-
-	enum class dynamic_extents_tag { };
-	constexpr dynamic_extents_tag dyn [[maybe_unused]] { -1 };
-
 
 	template <class T>
 	concept bool DynamicExtent() {
@@ -71,6 +73,33 @@ namespace fub
 		requires (const A& a, typename A::pointer ptr, std::ptrdiff_t i) {
 			{ a.access(ptr, i) } -> typename A::reference;
 		};
+	}
+
+	template <ranges::Semiregular S, ranges::Regular Pointer>
+	concept bool Storage() {
+		return requires (const S& storage) {
+			{ storage.size() } noexcept -> ranges::Integral;
+			{ storage.data() } noexcept -> Pointer;
+		};
+	}
+
+	template <typename D, typename T, Accessor<T> A>
+	concept bool Decorator() {
+		return requires {
+			typename D::pointer;
+			typename D::reference;
+			typename D::iterator;
+			typename D::sentinel;
+		} && requires (const D& d) {
+			{ d.base() } noexcept -> ranges::ConvertibleTo<const A&>;
+		};
+	}
+
+	struct construction_error_tag{};
+
+	template <typename P>
+	concept bool ErrorPolicy() {
+		return ranges::Invocable<P, construction_error_tag{}, bool(&)()>();
 	}
 }
 

@@ -26,7 +26,7 @@ namespace fub
 		///
 		/// If the n-th Extent is a dynamic one, it returns an empty optional.
 		/// Recursion case.
-		template <ranges::Integral I, Extent Head, Extent... Tail>
+		template <ranges::Integral I, concepts::span::Extent Head, concepts::span::Extent... Tail>
 		constexpr std::optional<I>
 		extent(I idx, Head head [[maybe_unused]], Tail... tail)
 		noexcept
@@ -87,12 +87,12 @@ namespace fub
 		}
 
 		/// \brief helper function, recursion
-		template <ranges::Integral I, Extent Head, Extent... Tail>
+		template <ranges::Integral I, concepts::span::Extent Head, concepts::span::Extent... Tail>
 		constexpr std::size_t
 		count_dynamic_dimensions_(I count, Head, Tail... tail)
 		noexcept
 		{
-			if constexpr(DynamicExtent<Head>()) {
+			if constexpr(concepts::span::DynamicExtent<Head>()) {
 				return count_dynamic_dimensions_(count+1, tail...);
 			}
 			return count_dynamic_dimensions_(count, tail...);
@@ -119,7 +119,12 @@ namespace fub
 		}
 
 		/// \brief Helper function, recursion
-		template <ranges::Integral I, ranges::Integral J, Extent Head, Extent... Tail>
+		template <
+			ranges::Integral I,
+			ranges::Integral J,
+			concepts::span::Extent Head,
+			concepts::span::Extent... Tail
+		>
 		constexpr I
 		count_dynamic_dimensions_until_(I count, J idx, Head, Tail... tail)
 		noexcept
@@ -127,14 +132,14 @@ namespace fub
 			if (idx == 0) {
 				return count;
 			}
-			if constexpr (DynamicExtent<Head>()) {
+			if constexpr (concepts::span::DynamicExtent<Head>()) {
 				return count_dynamic_dimensions_until_(count+1, idx-1, tail...);
 			}
 			return count_dynamic_dimensions_until_(count, idx-1, tail...);
 		}
 
 		/// \brief Returns number of dynamic dimensions up to an given index idx.
-		template <ranges::Integral I, Extent... Dims>
+		template <ranges::Integral I, concepts::span::Extent... Dims>
 		constexpr std::size_t
 		count_dynamic_dimensions_until(I idx, Dims... dims)
 		noexcept
@@ -222,7 +227,7 @@ namespace fub
 	template <auto... Dims>
 	requires (
 			sizeof...(Dims) > 0 &&
-			(true && ... && Extent<decltype(Dims)>())
+			(true && ... && concepts::span::Extent<decltype(Dims)>())
 	)
 	class dimensions
 		: dynamic_dimensions_storage<detail::count_dynamic_dimensions<Dims...>()>

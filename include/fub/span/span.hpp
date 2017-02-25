@@ -421,8 +421,6 @@ namespace fub
 			)
 			{ return accessor().access(m_storage, idx, error_policy()); }
 
-			// }}}
-
 			// CAPACITY
 
 			/// \brief Returns the amount of accessible elements.
@@ -432,8 +430,6 @@ namespace fub
 			constexpr auto size() const noexcept
 			{ return m_storage.size(); }
 
-			// }}}
-
 			// ITERATORS
 
 			constexpr iterator begin() const noexcept
@@ -441,8 +437,6 @@ namespace fub
 
 			constexpr sentinel end() const noexcept
 			{ return accessor().end(m_storage); }
-
-			// }}}
 
 		private:
 			ranges::Integral{I}

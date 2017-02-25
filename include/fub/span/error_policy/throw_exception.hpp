@@ -6,34 +6,33 @@
 #ifndef ERROR_POLICY_THROW_EXCEPTION_HPP
 #define ERROR_POLICY_THROW_EXCEPTION_HPP
 
-#include "fub/concepts.hpp"
-#include <stdexcept>
+#include "fub/span/concepts.hpp"
 
-namespace fub::ep
+namespace fub::error_policy
 {
-  template <class Exception = std::logic_error>
-  struct throw_exception {
-    template <ranges::Invocable Check>
-    void run(Check check) const
-    requires ranges::DefaultConstructible<Exception>()
-    {
-      if (!check()) {
-        throw Exception{};
-      }
-    }
+	template <class Exception = std::logic_error>
+	struct throw_exception {
 
-    template <ranges::Invocable Check, typename... Args>
-    constexpr void operator()(Check check, Args&&... what) const
-    {
-      if (!check()) {
-        throw Exception{std::forward<Args>(what)...};
-      }
-    }
+		template <ranges::Predicate Pred>
+		constexpr void run(Pred pred) const
+		{
+			if (!pred()) {
+				throw Exception{"Span Expection"};
+			}
+		}
 
-    template <class Tag, ranges::Invocable Check, class... Args>
-    constexpr void operator()(Tag, Check&& check, Args&&... args) const
-    { this->operator()(std::forward<Check>(check), std::forward<Args>(args)...); }
-  };
+		template <ranges::Predicate Pred, typename... Args>
+		constexpr void run(Pred pred, Args&&... what) const
+		{
+			if (!pred()) {
+				throw Exception{std::forward<Args>(what)...};
+			}
+		}
+
+		template <typename Tag, ranges::Predicate Pred, typename... Args>
+		constexpr void operator()(Tag, Pred pred, Args&&...) const
+		{ run(std::move(pred)); }
+	};
 }
 
 #endif

@@ -6,13 +6,13 @@
 #ifndef FUB_ERROR_POLICY_TERMINATE_HPP
 #define FUB_ERROR_POLICY_TERMINATE_HPP
 
-#include "fub/concepts.hpp"
+#include "fub/span/concepts.hpp"
 
 namespace fub::error_policy
 {
 	struct ignore {
 		template <typename Tag, ranges::Predicate Pred, typename... Args>
-		constexpr void operator()(Tag, Pred pred, Args&&...) const noexcept
+		constexpr void operator()(Tag, Pred pred [[maybe_unused]], Args&&...) const noexcept
 		{}
 	};
 }

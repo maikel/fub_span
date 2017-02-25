@@ -13,13 +13,16 @@ namespace fub::decorator
 	struct identity {
 		template <typename T, concepts::span::Accessor<T> A>
 		struct accessor
-			: ranges::detail::ebo_box<A, identity::accessor<T, A>>
+			: private ranges::detail::ebo_box<A, identity::accessor<T, A>>
 		{
 			using base_t = ranges::detail::ebo_box<A, identity::accessor<T, A>>;
 			using pointer = typename A::pointer;
 			using reference = typename A::reference;
 			using iterator = pointer;
 			using sentinel = pointer;
+
+			using base_t::base_t;
+			using base_t::get;
 
 			constexpr const A& base() const noexcept
 			{ return base_t::get(); }
@@ -30,7 +33,7 @@ namespace fub::decorator
 				concepts::span::ErrorPolicy EP
 			>
 			constexpr reference access(const S& s, I i, const EP& error_policy [[maybe_unused]])
-			const noexcept(noexcept(std::declval<base_t>().access(std::declval<pointer>(), 0)))
+			const noexcept(noexcept(std::declval<A>().access(std::declval<pointer>(), 0)))
 			{ return base().access(s.data(), i); }
 
 			template <concepts::span::Storage<pointer> S>

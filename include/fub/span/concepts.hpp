@@ -14,6 +14,12 @@ namespace fub
 
 	enum class dynamic_extents_tag { };
 	constexpr dynamic_extents_tag dyn [[maybe_unused]] { -1 };
+
+	// ERROR TAGS FOR SPANS
+
+	struct construction_tag{};
+	struct expects_tag{};
+	struct bounded_tag{};
 }
 
 namespace fub::concepts::span
@@ -83,23 +89,27 @@ namespace fub::concepts::span
 		};
 	}
 
-	template <typename D, typename T, Accessor<T> A>
+	template <typename D, typename T, typename A>
+	using decorated_accessor_t = typename D::template accessor<T, A>;
+
+	template <typename D, typename T, Accessor<T> A, Storage<typename A::pointer> S>
 	concept bool Decorator() {
 		return requires {
-			typename D::pointer;
-			typename D::reference;
-			typename D::iterator;
-			typename D::sentinel;
-		} && requires (const D& d) {
+			typename D::template accessor<T, A>;
+			typename D::template accessor<T, A>::pointer;
+			typename D::template accessor<T, A>::reference;
+			typename D::template accessor<T, A>::iterator;
+			typename D::template accessor<T, A>::sentinel;
+		} && requires (const decorated_accessor_t<D, T, A>& d, const S& s, int i) {
 			{ d.base() } noexcept -> ranges::ConvertibleTo<const A&>;
+			{ d.begin(s) } -> ranges::RandomAccessIterator;
+			{ d.end(s) } -> ranges::Sentinel<decltype(d.begin(s))>;
 		};
 	}
 
-	struct construction_error_tag{};
-
 	template <typename P>
 	concept bool ErrorPolicy() {
-		return ranges::Invocable<P, construction_error_tag{}, bool(&)()>();
+		return ranges::Invocable<P, construction_tag, bool(&)()>();
 	}
 }
 

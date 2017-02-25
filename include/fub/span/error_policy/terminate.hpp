@@ -6,7 +6,7 @@
 #ifndef FUB_ERROR_POLICY_TERMINATE_HPP
 #define FUB_ERROR_POLICY_TERMINATE_HPP
 
-#include "fub/concepts.hpp"
+#include "fub/span/concepts.hpp"
 
 namespace fub::error_policy
 {

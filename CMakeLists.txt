@@ -16,4 +16,4 @@ include_directories("${PROJECT_SOURCE_DIR}/third-party/Catch/include")
 
 add_executable(dimensions "test/dimensions.t.cpp")
 add_executable(accessor_native "test/native.t.cpp")
-add_executable(identity "test/identity.t.cpp")
+add_executable(span "test/span.t.cpp")
